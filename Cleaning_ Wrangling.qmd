@@ -1,0 +1,250 @@
+---
+title: "Cleaning & Wrangling"
+author: "Brooke"
+format: html
+---
+
+## Background
+
+
+
+## Traits & Objectives
+
+-   Relative Growth Rate
+-   Photosynthetic Rate
+-   Leaf Mass Area
+-   Leaf Area
+-   WUE 
+-   Height
+-   Leaf Nitrogen
+-   Date of first flower
+-   Mid season biomass
+-   Root biomass
+-   Root:shoot ratio
+-   Root diameter
+-   Specific root length
+-   Root nitrogen
+
+
+## Setup
+
+```{r}
+#| message: false
+#| warning: false
+#| echo: false
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(viridis)
+library(lme4)
+library(LeafArea)
+```
+
+## Relative Growth Rate
+
+### Clean up dataset
+
+```{r}
+rgr <- read_csv("RGR_2024.csv")
+plots <- read_csv("Plot_info.csv")
+str(rgr)
+summary(rgr)
+head(rgr)
+unique(rgr$Month)
+
+# Extract species code from ID
+# Extract plot, shelter letter from ID, add in block and population
+rgr2 <- rgr %>% 
+  mutate(
+  #Plant_ID = if_else(Month == "May" | Month == "June", true = paste0(Plant_ID, ".1"), false = Plant_ID),
+         Sp_Code = substring(Plant_ID, 4,9),
+         Plot = substring(Plant_ID, 1,2),) %>% 
+  left_join(plots,by = join_by(Plot)) %>% 
+  select(
+    Plant_ID,
+    Sp_Code,
+    Date,
+    Month,
+    Height_cm,
+    Canopy_x_cm,
+    Canopy_y_cm,
+    Plot,
+    Block,
+    Shelter,
+    Plot_number,
+    Population,
+    Treatment
+  )
+str(rgr2)  
+
+unique(rgr2$Sp_Code)
+# Problem because the perennials have 23 in front of them so the substrings didn't work
+
+unique(rgr2$Shelter)
+# where did the NA come in
+
+unique(rgr2$Plot)
+# why is one plot 23?
+
+# Find gaps, investigate
+# Fixed, entering errors besides A1.ACMPAR in May which is missing leaf count
+
+incomplete_rows <- rgr2[,c("Plant_ID","Month","Height_cm","Leaf_number","canopy_x","canopy_y")]
+incomplete_rows_2 <- incomplete_rows[!complete.cases(incomplete_rows),]
+incomplete_rows_2 <- incomplete_rows_2[rowSums(is.na(incomplete_rows_2)) < 4,] 
+
+# Find and investigate outliers
+# Good job for interns
+# Find average and standard deviation for each species, each growth variable (make area first), per population per month
+str(rgr2)
+rgr2$area <- as.numeric(rgr2$canopy_x)*as.numeric(rgr2$canopy_y)
+
+rgr_avgs <- rgr2 %>% 
+  group_by(Sp_Code,
+           Month,
+           Population) %>% 
+  mutate(ht_avg = mean(Height_cm, na.rm = TRUE),
+            ht_sd = sd(Height_cm, na.rm = TRUE),
+            lf_avg = mean(Leaf_number, na.rm = TRUE),
+            lf_sd = sd(Leaf_number, na.rm = TRUE),
+            area_avg = mean(area, na.rm = TRUE),
+            area_sd = sd(area, na.rm = TRUE),
+            x_avg = mean(canopy_x, na.rm = TRUE),
+            x_sd = sd(canopy_x, na.rm = TRUE),
+            y_avg = mean(canopy_y, na.rm = TRUE),
+            y_sd = sd(canopy_y, na.rm = TRUE)) %>% 
+  select(Plant_ID,
+         Sp_Code,
+         Month,
+         Population,
+         Height_cm,
+         ht_avg,
+         ht_sd,
+         Leaf_number,
+         lf_avg,
+         lf_sd,
+         area,
+         area_avg,
+         area_sd,
+         canopy_x,
+         canopy_y,
+         x_avg,
+         x_sd,
+         y_avg,
+         y_sd)
+
+rgr_avgs <- rgr_avgs[complete.cases(rgr_avgs),]
+
+rgr_avgs <- rgr_avgs %>% 
+  mutate(ht_max = ht_avg + 3*ht_sd,
+         ht_min = ht_avg - 3*ht_sd,
+         lf_max = lf_avg + 3*lf_sd,
+         lf_min = lf_avg - 3*lf_sd,
+         area_max = area_avg + 3*area_sd,
+         area_min = area_avg - 3*area_sd,
+         x_max = x_avg + 3*x_sd,
+         x_min = x_avg - 3*x_sd,
+         y_max = y_avg + 3*y_sd,
+         y_min = y_avg - 3*y_sd)
+
+ht_outliers <- rgr_avgs[which(rgr_avgs$Height_cm > rgr_avgs$ht_max | rgr_avgs$Height_cm < rgr_avgs$ht_min),c("Plant_ID","Sp_Code","Month","Population", "Height_cm","ht_avg","ht_sd","ht_min","ht_max")]
+
+lf_outliers <- rgr_avgs[which(rgr_avgs$Leaf_number > rgr_avgs$lf_max | rgr_avgs$Leaf_number < rgr_avgs$lf_min),c("Plant_ID","Sp_Code","Month","Population", "Leaf_number","lf_avg","lf_sd","lf_min","lf_max")]
+
+area_outliers <- rgr_avgs[which(rgr_avgs$area > rgr_avgs$area_max | rgr_avgs$area < rgr_avgs$area_min),c("Plant_ID","Sp_Code","Month","Population", "area","area_avg","area_sd","area_min","area_max")]
+
+x_outliers <- rgr_avgs[which(rgr_avgs$canopy_x > rgr_avgs$x_max | rgr_avgs$canopy_x < rgr_avgs$x_min),c("Plant_ID","Sp_Code","Month","Population", "canopy_x","x_avg","x_sd","x_min","x_max")]
+
+y_outliers <- rgr_avgs[which(rgr_avgs$canopy_y > rgr_avgs$y_max | rgr_avgs$canopy_y < rgr_avgs$y_min),c("Plant_ID","Sp_Code","Month","Population", "canopy_y","y_avg","y_sd","y_min","y_max")]
+
+## Now go and investigate outliers using original data
+```
+
+### Create variables
+
+```{r}
+# Calculate canopy volume (height x canopy area)
+head(rgr2)
+rgr2$volume <- rgr2$Height_cm*rgr2$canopy_x*rgr2$canopy_y
+rgr2$Date <- as.Date(rgr2$Date, tryFormats = "%m/%d/%y")
+str(rgr2)
+
+# Separate by metric
+
+rgr_h_wide <- rgr2 %>% 
+  select(Plant_ID,
+         Date,
+         Month,
+         Height_cm) %>% 
+  filter(!is.na(Height_cm)) %>%
+  pivot_wider(id_cols = Plant_ID,
+              names_from = Month,
+              values_from = c(Date, Height_cm)) %>% 
+  mutate(rgr_h_FM = (log(Height_cm_March)-log(Height_cm_February))/as.numeric((Date_March-Date_February)),
+         rgr_h_MA = (log(Height_cm_April)-log(Height_cm_March))/as.numeric((Date_April-Date_March)),
+         rgr_h_AM = (log(Height_cm_May)-log(Height_cm_April))/as.numeric((Date_May-Date_April)),
+         rgr_h_MJ = (log(Height_cm_June)-log(Height_cm_May))/as.numeric((Date_June-Date_May)))
+
+rgr_l_wide <- rgr2 %>% 
+  select(Plant_ID,
+         Date,
+         Month,
+         Leaf_number) %>% 
+  filter(!is.na(Leaf_number)) %>%
+  pivot_wider(id_cols = Plant_ID,
+              names_from = Month,
+              values_from = c(Date, Leaf_number)) %>% 
+  mutate(rgr_l_FM = (log(Leaf_number_March)-log(Leaf_number_February))/as.numeric((Date_March-Date_February)),
+         rgr_l_MA = (log(Leaf_number_April)-log(Leaf_number_March))/as.numeric((Date_April-Date_March)),
+         rgr_l_AM = (log(Leaf_number_May)-log(Leaf_number_April))/as.numeric((Date_May-Date_April)),
+         rgr_l_MJ = (log(Leaf_number_June)-log(Leaf_number_May))/as.numeric((Date_June-Date_May)))
+
+rgr_v_wide <- rgr2 %>% 
+  select(Plant_ID,
+         Date,
+         Month,
+         volume) %>% 
+  filter(!is.na(volume)) %>%
+  pivot_wider(id_cols = Plant_ID,
+              names_from = Month,
+              values_from = c(Date, volume)) %>% 
+  mutate(rgr_v_FM = (log(volume_March)-log(volume_February))/as.numeric((Date_March-Date_February)),
+         rgr_v_MA = (log(volume_April)-log(volume_March))/as.numeric((Date_April-Date_March)),
+         rgr_v_AM = (log(volume_May)-log(volume_April))/as.numeric((Date_May-Date_April)),
+         rgr_v_MJ = (log(volume_June)-log(volume_May))/as.numeric((Date_June-Date_May)))
+  
+# Join all three together but only keep rgrs, full join by Plant_ID
+
+rgr_h_l <- full_join(rgr_h_wide,rgr_l_wide,by = join_by(Plant_ID))
+
+rgr_hlv <- full_join(rgr_h_l,rgr_v_wide,by = join_by(Plant_ID))
+
+rgr_hlv2 <- rgr_hlv %>% 
+  select(
+    Plant_ID,
+    rgr_h_FM,
+    rgr_h_MA,
+    rgr_h_AM,
+    rgr_h_MJ,
+    rgr_l_FM,
+    rgr_l_MA,
+    rgr_l_AM,
+    rgr_l_MJ,
+    rgr_v_FM,
+    rgr_v_MA,
+    rgr_v_AM,
+    rgr_v_MJ
+  )
+
+## Wooooo we did it!
+## Now just need to address outliers and re-run
+## Some values have -Inf, investigate that at some point. For now you're done!
+```
+
+### Exploratory Graphs
+
+
+### Select Reference times
+One predictive variable of allometric slope might be relative growth rate timing and/or maximum relative growth rate.
+
