@@ -161,29 +161,29 @@ rgr_avgs <- rgr_avgs %>%
          y_max = y_avg + 3*y_sd,
          y_min = y_avg - 3*y_sd)
 
-ht_outliers <- rgr_avgs[which(rgr_avgs$Height_cm > rgr_avgs$ht_max | rgr_avgs$Height_cm < rgr_avgs$ht_min),c("Plant_ID","Sp_Code","Month","Population", "Treatment", "Height_cm","ht_avg","ht_sd","ht_min","ht_max")]
+ht_outliers <-rgr_avgs[which(rgr_avgs$Height_cm > rgr_avgs$ht_max | rgr_avgs$Height_cm < rgr_avgs$ht_min),c("Plant_ID","Sp_Code","Month","Population", "Treatment", "Height_cm","ht_avg","ht_sd","ht_min","ht_max")]
 
 area_outliers <- rgr_avgs[which(rgr_avgs$area > rgr_avgs$area_max | rgr_avgs$area < rgr_avgs$area_min),c("Plant_ID","Sp_Code","Month","Population", "Treatment", "area","area_avg","area_sd","area_min","area_max")]
 
-x_outliers <- rgr_avgs[which(rgr_avgs$Canopy_x_cm > rgr_avgs$x_max | rgr_avgs$canopy_x < rgr_avgs$x_min),c("Plant_ID","Sp_Code","Month","Population", "Treatment", "Canopy_x_cm","x_avg","x_sd","x_min","x_max")]
+x_outliers <- rgr_avgs[which(rgr_avgs$Canopy_x_cm > rgr_avgs$x_max | rgr_avgs$Canopy_x_cm < rgr_avgs$x_min),c("Plant_ID","Sp_Code","Month","Population", "Treatment", "Canopy_x_cm","x_avg","x_sd","x_min","x_max")]
 
-y_outliers <- rgr_avgs[which(rgr_avgs$Canopy_y_cm > rgr_avgs$y_max | rgr_avgs$canopy_y < rgr_avgs$y_min),c("Plant_ID","Sp_Code","Month","Population", "Treatment", "Canopy_y_cm","y_avg","y_sd","y_min","y_max")]
+y_outliers <- rgr_avgs[which(rgr_avgs$Canopy_y_cm > rgr_avgs$y_max | rgr_avgs$Canopy_y_cm < rgr_avgs$y_min),c("Plant_ID","Sp_Code","Month","Population", "Treatment", "Canopy_y_cm","y_avg","y_sd","y_min","y_max")]
 
-## Now go and investigate outliers using original data
+## No outliers for 3 SD from mean, investigate blanks
 ```
 
 ### Create variables
 
 ```{r}
 # Calculate canopy volume (height x canopy area)
-head(rgr2)
-rgr2$volume <- rgr2$Height_cm*rgr2$canopy_x*rgr2$canopy_y
-rgr2$Date <- as.Date(rgr2$Date, tryFormats = "%m/%d/%y")
-str(rgr2)
+head(rgr3)
+rgr3$volume <- rgr3$Height_cm*rgr3$Canopy_x_cm*rgr3$Canopy_y_cm
+rgr3$Date <- as.Date(rgr3$Date, tryFormats = "%m/%d/%y")
+str(rgr3)
 
 # Separate by metric
 
-rgr_h_wide <- rgr2 %>% 
+rgr_h_wide <- rgr3 %>% 
   select(Plant_ID,
          Date,
          Month,
@@ -197,21 +197,7 @@ rgr_h_wide <- rgr2 %>%
          rgr_h_AM = (log(Height_cm_May)-log(Height_cm_April))/as.numeric((Date_May-Date_April)),
          rgr_h_MJ = (log(Height_cm_June)-log(Height_cm_May))/as.numeric((Date_June-Date_May)))
 
-rgr_l_wide <- rgr2 %>% 
-  select(Plant_ID,
-         Date,
-         Month,
-         Leaf_number) %>% 
-  filter(!is.na(Leaf_number)) %>%
-  pivot_wider(id_cols = Plant_ID,
-              names_from = Month,
-              values_from = c(Date, Leaf_number)) %>% 
-  mutate(rgr_l_FM = (log(Leaf_number_March)-log(Leaf_number_February))/as.numeric((Date_March-Date_February)),
-         rgr_l_MA = (log(Leaf_number_April)-log(Leaf_number_March))/as.numeric((Date_April-Date_March)),
-         rgr_l_AM = (log(Leaf_number_May)-log(Leaf_number_April))/as.numeric((Date_May-Date_April)),
-         rgr_l_MJ = (log(Leaf_number_June)-log(Leaf_number_May))/as.numeric((Date_June-Date_May)))
-
-rgr_v_wide <- rgr2 %>% 
+rgr_v_wide <- rgr3 %>% 
   select(Plant_ID,
          Date,
          Month,
@@ -227,21 +213,15 @@ rgr_v_wide <- rgr2 %>%
   
 # Join all three together but only keep rgrs, full join by Plant_ID
 
-rgr_h_l <- full_join(rgr_h_wide,rgr_l_wide,by = join_by(Plant_ID))
+rgr_hv <- full_join(rgr_h_wide,rgr_v_wide,by = join_by(Plant_ID))
 
-rgr_hlv <- full_join(rgr_h_l,rgr_v_wide,by = join_by(Plant_ID))
-
-rgr_hlv2 <- rgr_hlv %>% 
+rgr_hv2 <- rgr_hv %>% 
   select(
     Plant_ID,
     rgr_h_FM,
     rgr_h_MA,
     rgr_h_AM,
     rgr_h_MJ,
-    rgr_l_FM,
-    rgr_l_MA,
-    rgr_l_AM,
-    rgr_l_MJ,
     rgr_v_FM,
     rgr_v_MA,
     rgr_v_AM,
@@ -250,7 +230,7 @@ rgr_hlv2 <- rgr_hlv %>%
 
 ## Wooooo we did it!
 ## Now just need to address outliers and re-run
-## Some values have -Inf, investigate that at some point. For now you're done!
+## For now you're done!
 ```
 
 ### Exploratory Graphs
