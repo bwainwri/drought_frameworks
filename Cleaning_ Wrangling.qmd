@@ -25,7 +25,6 @@ format: html
 -   Specific root length
 -   Root nitrogen
 
-
 ## Setup
 
 ```{r}
@@ -41,7 +40,141 @@ library(lme4)
 library(LeafArea)
 #install.packages("naniar")
 library(naniar)
+library(lubridate)
 ```
+
+## Climate & Soil
+
+```{r}
+soil_A <- read_csv("z6B02090 29Aug25-1126_A-E_All.csv", skip = 3)
+soil_F <- read_csv("z6B02089 29Aug25-1131_F-J_All.csv", skip = 3)
+colnames(soil_A) <- c("Timestamp", "Precip_C_mm", "Precip_C_rate","Shelter_E","Shelter_D","Shelter_C","Shelter_B","Shelter_A","Batt_per_A","Batt_volt_A")
+colnames(soil_F) <- c("Timestamp", "Precip_H_mm", "Precip_H_rate","Shelter_J","Shelter_I","Shelter_H","Shelter_G","Shelter_F","Batt_per_F","Batt_volt_F")
+?pivot_longer
+soil_AJ <- full_join(soil_A, soil_F, by = join_by(Timestamp))
+str(soil_AJ)
+soil_AJ$Timestamp <- as_datetime(soil_AJ$Timestamp, format = "%m/%d/%y %H:%M")
+soil_AJ$Shelter_E <- as.numeric(soil_AJ$Shelter_E)
+soil_AJ$Shelter_D <- as.numeric(soil_AJ$Shelter_D)
+soil_AJ$Shelter_J <- as.numeric(soil_AJ$Shelter_J)
+  
+soil_AJ_long <- soil_AJ %>% 
+  pivot_longer(cols = c(Shelter_A, Shelter_B, Shelter_C, Shelter_D, Shelter_E, Shelter_F, Shelter_G, Shelter_H, Shelter_I, Shelter_J),
+               names_to = "Shelter")
+shelter_key <- read_csv("Shelter Key.csv")
+
+soil_AJ_long_trt <- left_join(soil_AJ_long,shelter_key,by=join_by("Shelter"))
+
+soil_AJ_long_trt$Month <- format(soil_AJ_long_trt$Timestamp,"%B")
+soil_AJ_long_trt$Month_n <- as.numeric(format(soil_AJ_long_trt$Timestamp,"%m"))
+soil_AJ_long_trt$Year <- as.numeric(format(soil_AJ_long_trt$Timestamp,"%Y"))
+
+str(soil_AJ_long_trt)
+soil_22_23 <- soil_AJ_long_trt %>% 
+  filter(Timestamp > "2022-11-01 00:00:00" & Timestamp < "2023-05-31 23:00:00")
+soil_23_24 <- soil_AJ_long_trt %>% 
+  filter(Timestamp > "2023-11-01 00:00:00" & Timestamp < "2024-05-31 23:00:00")
+soil_24_25 <- soil_AJ_long_trt %>% 
+  filter(Timestamp > "2024-11-01 00:00:00" & Timestamp < "2025-05-31 23:00:00")
+
+soil_summary_22_23_m <- soil_22_23 %>% 
+  group_by(Month, Treatment) %>% 
+  summarise(sm_avg = mean(value),
+            Year = Year,
+            Month_n = Month_n) %>% 
+  distinct() %>% 
+  select(
+    Month,
+    Year,
+    Treatment,
+    sm_avg,
+    Month_n
+  )
+
+soil_summary_22_23 <- soil_22_23 %>% 
+  group_by(Treatment) %>% 
+  summarise(sm_avg = mean(value),
+            Month = "All",
+            Year = 2023,
+            Month_n = 13) %>% 
+  select(
+    Month,
+    Year,
+    Treatment,
+    sm_avg,
+    Month_n
+  )
+
+soil_summary_23_24_m <- soil_23_24 %>% 
+  group_by(Month, Treatment) %>% 
+  summarise(sm_avg = mean(value, na.rm = TRUE),
+            Year = Year,
+            Month_n = Month_n) %>% 
+  distinct() %>% 
+  select(
+    Month,
+    Year,
+    Treatment,
+    sm_avg,
+    Month_n
+  )
+soil_summary_23_24 <- soil_23_24 %>% 
+  group_by(Treatment) %>% 
+  summarise(sm_avg = mean(value, na.rm = TRUE),
+            Month = "All",
+            Year = 2024,
+            Month_n = 13) %>% 
+  select(
+    Month,
+    Year,
+    Treatment,
+    sm_avg,
+    Month_n
+  )
+
+soil_summary_24_25_m <- soil_24_25 %>% 
+  group_by(Month, Treatment) %>% 
+  summarise(sm_avg = mean(value, na.rm = TRUE),
+            Year = Year,
+            Month_n = Month_n) %>% 
+  distinct() %>% 
+  select(
+    Month,
+    Year,
+    Treatment,
+    sm_avg,
+    Month_n
+  )
+soil_summary_24_25 <- soil_24_25 %>% 
+  group_by(Treatment) %>% 
+  summarise(sm_avg = mean(value, na.rm = TRUE),
+            Month = "All",
+            Year = 2025,
+            Month_n = 13) %>% 
+  select(
+    Month,
+    Year,
+    Treatment,
+    sm_avg,
+    Month_n
+  )
+
+sm_summary <- rbind(soil_summary_22_23_m,
+                    soil_summary_22_23,
+                    soil_summary_23_24,
+                    soil_summary_23_24_m,
+                    soil_summary_24_25,
+                    soil_summary_24_25_m)
+
+sm_summary_wide <- sm_summary %>% 
+  arrange(Year,Month_n) %>% 
+  pivot_wider(names_from = Treatment,
+              values_from = sm_avg)
+
+write_csv(sm_summary_wide, "USDA_Drought_sm_summary.csv")
+
+```
+
 
 ## Relative Growth Rate
 
@@ -269,7 +402,10 @@ licor <- bind_rows(lic)
 licor <- licor %>% 
   filter(!is.na(obs))
 
+write_csv(licor, "licor.csv")
+
 ```
+### Chamber Leaf Scans
 
 Now I need to bring in Licor leaf area csv and join. Also need to double check numbers for each species.
 
@@ -578,18 +714,25 @@ leaf_licor_area$sample[which(nchar(leaf_licor_area$sample) < 18)]
 write_csv(leaf_licor_area, "leaf_licor_area.csv")
 ```
 
+### Merge licor & images
+
 Double check that the numbers of values per species aligns with number of images per species folder. -- All good
 
 Then merge with Licor dataset by plant ID.
 
 LEFT OFF HERE
 
+Started cleaning up files for merging, resolving errors, etc. Four dates of licor dataframe have all NAs for plant id and WUE, these came from the daisy licor -- plant id is in the original file but didn't carry over either in csv step or binding step.
+
+Return here for further cleaning and prepping.
+
 ```{r}
-#| eval: false
 # Separate date from plant ID, make in date format
+
 leaf_licor_area <- read_csv("leaf_licor_area.csv")
 head(leaf_licor_area)
 head(licor)
+leaf_licor_area$sample[which(nchar(leaf_licor_area$sample) < 18)]
 
 licor$Date <- as.Date(substr(licor$date, start=1, stop=10))
 str(licor$Date)
