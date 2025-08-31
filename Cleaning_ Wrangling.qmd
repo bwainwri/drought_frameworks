@@ -722,11 +722,16 @@ Then merge with Licor dataset by plant ID.
 
 LEFT OFF HERE
 
-Started cleaning up files for merging, resolving errors, etc. Four dates of licor dataframe have all NAs for plant id and WUE, these came from the daisy licor -- plant id is in the original file but didn't carry over either in csv step or binding step.
+Started cleaning up files for merging, resolving errors, etc. Four dates of licor dataframe have all NAs for plant id and WUE, these came from the daisy licor -- plant id is in the original file but didn't carry over either in csv step or binding step. 
+
+Plant id can be found in other "plant_id" column, not "plant id". But doesn't explain missing WUE.
+
+WUE is a user defined variable that we didn't put in Daisy, so I'll need to calculate it manually.
 
 Return here for further cleaning and prepping.
 
 ```{r}
+#| eval: false
 # Separate date from plant ID, make in date format
 
 leaf_licor_area <- read_csv("leaf_licor_area.csv")
@@ -736,6 +741,15 @@ leaf_licor_area$sample[which(nchar(leaf_licor_area$sample) < 18)]
 
 licor$Date <- as.Date(substr(licor$date, start=1, stop=10))
 str(licor$Date)
+
+# make a function such that if the string is 20 characters long, it' starts at 13 and ends at 20, and if the string is 18 characters long, it starts at 11 and ends at 18
+
+if(nchar(leaf_licor_area$sample) == 18) {
+  leaf_licor_area$Date <- as.Date(substr(leaf_licor_area$sample, start=11, stop=18), "%Y%m%d")
+} else {
+  leaf_licor_area$Date <- as.Date(substr(leaf_licor_area$sample, start=13, stop=20), "%Y%m%d")
+}
+
 
 leaf_licor_area$Date <- as.Date(substr(leaf_licor_area$sample, start=11, stop=18), "%Y%m%d")
 str(licor$Date)
