@@ -744,18 +744,13 @@ str(licor$Date)
 
 # make a function such that if the string is 20 characters long, it' starts at 13 and ends at 20, and if the string is 18 characters long, it starts at 11 and ends at 18
 
-if(nchar(leaf_licor_area$sample) == 18) {
-  leaf_licor_area$Date <- as.Date(substr(leaf_licor_area$sample, start=11, stop=18), "%Y%m%d")
-} else {
-  leaf_licor_area$Date <- as.Date(substr(leaf_licor_area$sample, start=13, stop=20), "%Y%m%d")
-}
-
-
-leaf_licor_area$Date <- as.Date(substr(leaf_licor_area$sample, start=11, stop=18), "%Y%m%d")
+leaf_licor_area$Date <- as.Date(substr(leaf_licor_area$sample_short, start=11, stop=18), "%Y%m%d")
 str(licor$Date)
 
+leaf_licor_area$perennial <- as.character(leaf_licor_area$perennial)
+
 # separate plant ID from same and add periods to plant id
-leaf_licor_area$Plant_ID <- substr(leaf_licor_area$sample, start=1,stop=9)
+leaf_licor_area$Plant_ID <- substr(leaf_licor_area$sample_short, start=1,stop=9)
 leaf_licor_area$Plant_ID <- paste0(
   substr(leaf_licor_area$Plant_ID, 1, 2),
   ".",
@@ -769,6 +764,18 @@ leaf_licor_area$Plant_ID <- paste0(
   substr(leaf_licor_area$Plant_ID, 10, nchar(leaf_licor_area$Plant_ID))
 )
 leaf_licor_area$Plant_ID
+
+# I think I need to split the 23s and replacements and then r-bind
+# Add 23 to the front of two year old perennials
+leaf_licor_area$Plant_ID <- paste0(
+  substr(leaf_licor_area$perennial, 1, 2),
+  ".",
+  substr(leaf_licor_area$Plant_ID, 1, nchar(leaf_licor_area$Plant_ID))
+)
+leaf_licor_area$Plant_ID
+
+# add "- replacement plot"
+
 
 # capitalize Licor plant id
 licor$Plant_ID <- toupper(licor$`plant id`)
