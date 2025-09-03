@@ -378,7 +378,7 @@ One predictive variable of allometric slope might be relative growth rate timing
 
 ```{r}
 #| warning: false
-
+#| eval: false
 # how to tell it the header and which rows to skip
 # how to read through the filenames in a certain folder and make a list and then read those in 1 by 1
 
@@ -731,11 +731,11 @@ WUE is a user defined variable that we didn't put in Daisy, so I'll need to calc
 Return here for further cleaning and prepping.
 
 ```{r}
-#| eval: false
 # Separate date from plant ID, make in date format
 
 leaf_licor_area <- read_csv("leaf_licor_area.csv")
 head(leaf_licor_area)
+licor <- read_csv("licor.csv")
 head(licor)
 leaf_licor_area$sample[which(nchar(leaf_licor_area$sample) < 18)]
 
@@ -767,23 +767,69 @@ leaf_licor_area$Plant_ID
 
 # I think I need to split the 23s and replacements and then r-bind
 # Add 23 to the front of two year old perennials
-leaf_licor_area$Plant_ID <- paste0(
-  substr(leaf_licor_area$perennial, 1, 2),
+lf_lic_area_23 <- leaf_licor_area %>% 
+  filter(perennial == "23")
+
+lf_lic_area_23$Plant_ID <- paste0(
+  substr(lf_lic_area_23$perennial, 1, 2),
   ".",
-  substr(leaf_licor_area$Plant_ID, 1, nchar(leaf_licor_area$Plant_ID))
+  substr(lf_lic_area_23$Plant_ID, 1, nchar(lf_lic_area_23$Plant_ID))
 )
-leaf_licor_area$Plant_ID
+lf_lic_area_23$Plant_ID
+
+lf_lic_area_na <- leaf_licor_area %>% 
+  filter(is.na(perennial))
+
+leaf_licor_area <- rbind(lf_lic_area_23, lf_lic_area_na)
 
 # add "- replacement plot"
+lf_lic_area_rep <- leaf_licor_area %>% 
+  filter(!is.na(plot_replace))
 
+lf_lic_area_rep$Plant_ID <- paste0(
+  substr(lf_lic_area_rep$Plant_ID, 1, nchar(lf_lic_area_rep$Plant_ID)),
+  "-",
+  substr(lf_lic_area_rep$plot_replace, 1, 2)
+)
+lf_lic_area_rep$Plant_ID
+
+lf_lic_area_na <- leaf_licor_area %>% 
+  filter(is.na(plot_replace))
+
+leaf_licor_area <- rbind(lf_lic_area_rep, lf_lic_area_na)
+
+# align plant_ids and check for errors
+leaf_licor_ids <- leaf_licor_area %>% 
+  mutate(Plant_ID_lf = Plant_ID) %>% 
+  select(Date,
+         Plant_ID,
+         Plant_ID_lf)
+
+licor$Plant_ID <- toupper(licor$`plant id`)
+
+licor_ids <- licor %>% 
+  mutate(Plant_ID_lic = Plant_ID) %>% 
+  select(date,
+         Plant_ID,
+         Plant_ID_lic)
+
+error_check <- full_join(leaf_licor_ids,licor_ids, by= join_by(Plant_ID))
+list <- error_check[which(!complete.cases(error_check)),]
+write_csv(list, "error_list.csv")
+
+## LEFT OFF HERE ##
 
 # capitalize Licor plant id
 licor$Plant_ID <- toupper(licor$`plant id`)
 
+
 # merge with licor leaf area
-licor2 <- left_join(licor,leaf_licor_area,by=c("Plant_ID" = "Plant_ID"))
+licor2 <- full_join(licor,leaf_licor_area,by=c("Plant_ID" = "Plant_ID"))
+
 
 # Come back and investigate NAs for licor2 -- why are some leaf areas missing
+licor_incomplete <- licor2[!complete.cases(licor2[ , c('plant id', 'Plant_ID')]), ]
+
 
 # multiply focal data by leaf area fraction
 licor2$leaf_ratio <- 6/licor2$total.leaf.area
