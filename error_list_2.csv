@@ -23,9 +23,9 @@ NA,D3.BROARE.1,NA,2024-03-18T12:15:03Z,D3.BROARE.1,changed licor record to 0.3
 NA,D3.BROARE.1,NA,2024-03-18T12:15:53Z,D3.BROARE.1,changed licor record to 0.3
 NA,B8.BROARE.1,NA,2024-03-18T12:25:02Z,B8.BROARE.1,changed licor record to 0.3
 NA,A2.AMSMEN.1,NA,2024-03-18T13:09:57Z,A2.AMSMEN.1,changed licor record to 0.3
-NA,G5.PLAERE.2,NA,2024-04-25T13:41:19Z,G5.PLAERE.2,"no leaf, averaged other leaves of control treatments"
-NA,G5.PLAERE.2,NA,2024-04-25T13:42:15Z,G5.PLAERE.2,"no leaf, averaged other leaves of control treatments"
-NA,G5.PLAERE.2,NA,2024-04-25T13:43:08Z,G5.PLAERE.2,"no leaf, averaged other leaves of control treatments"
+NA,G5.PLAERE.2,NA,2024-04-25T13:41:19Z,G5.PLAERE.2,"no leaf, average other leaves of treatment and population"
+NA,G5.PLAERE.2,NA,2024-04-25T13:42:15Z,G5.PLAERE.2,"no leaf, average other leaves of treatment and population"
+NA,G5.PLAERE.2,NA,2024-04-25T13:43:08Z,G5.PLAERE.2,"no leaf, average other leaves of treatment and population"
 NA,F2.LUPMIC.2,NA,2024-04-25T14:00:36Z,F2.LUPMIC.2,changed licor record to 0.1
 NA,F2.LUPBIC.1,NA,2024-04-25T14:47:03Z,F2.LUPBIC.1,"error, should be g2"
 NA,A4.BROMAD.2,NA,2024-04-26T11:26:23Z,A4.BROMAD.2,"ACCIDENTALLY PUT NO LICOR, FIXED"
@@ -57,55 +57,55 @@ NA,H3.BROMAD.2,NA,2024-04-26T13:33:18Z,H3.BROMAD.2,"ACCIDENTALLY PUT NO LICOR, F
 NA,H3.BROMAD.2,NA,2024-04-26T13:34:12Z,H3.BROMAD.2,"ACCIDENTALLY PUT NO LICOR, FIXED"
 NA,H3.BROMAD.2,NA,2024-04-26T13:35:11Z,H3.BROMAD.2,"ACCIDENTALLY PUT NO LICOR, FIXED"
 NA,F4.BROHOR.2,NA,2024-04-28T14:26:34Z,F4.BROHOR.2,changed licor record 0.2
-NA,F5.MICCAL.2,NA,2024-04-28T14:32:36Z,F5.MICCAL.2,"no leaf, averaged other leaves of control treatments and population"
-NA,F5.MICCAL.2,NA,2024-04-28T14:34:43Z,F5.MICCAL.2,"no leaf, averaged other leaves of control treatments and population"
-NA,F5.MICCAL.2,NA,2024-04-28T14:35:40Z,F5.MICCAL.2,"no leaf, averaged other leaves of control treatments and population"
-NA,B5.MICCAL.2,NA,2024-04-30T10:35:44Z,B5.MICCAL.2,
-NA,B3.MICCAL.2,NA,2024-04-30T10:40:15Z,B3.MICCAL.2,
-NA,A8.MICCAL..2,NA,2024-04-30T12:46:26Z,A8.MICCAL..2,
-NA,D4.MICCAL.2,NA,2024-04-30T12:51:03Z,D4.MICCAL.2,
-NA,D4.MICCAL.2,NA,2024-04-30T12:51:55Z,D4.MICCAL.2,
-NA,E1.PLANOT.1,NA,2024-04-30T14:26:26Z,E1.PLANOT.1,
-NA,3.VICSAT.2,NA,2024-05-01T09:43:26Z,3.VICSAT.2,
-NA,A1.HYPGLA.2,NA,2024-05-01T14:02:01Z,A1.HYPGLA.2,
-NA,A1.HYPGLA.2,NA,2024-05-01T14:02:37Z,A1.HYPGLA.2,
-NA,23.A7.ESCCAL.1,NA,2024-05-01T10:05:42Z,23.A7.ESCCAL.1,
-NA,23.G7.ESCCAL.2,NA,2024-05-01T10:32:46Z,23.G7.ESCCAL.2,
-NA,UNK.C2.ESCCAL.1,NA,2024-05-01T10:53:35Z,UNK.C2.ESCCAL.1,
-NA,23.D7.ESCCAL.2,NA,2024-05-01T11:13:44Z,23.D7.ESCCAL.2,
-NA,23.I5.ESCCAL.2,NA,2024-05-01T11:20:57Z,23.I5.ESCCAL.2,
-NA,23.I8.ESCCAL.1,NA,2024-05-01T11:24:21Z,23.I8.ESCCAL.1,
-NA,UNK.E5.ESCCAL.1,NA,2024-05-01T11:40:18Z,UNK.E5.ESCCAL.1,
-NA,G3.AVEFAT.1-A6,NA,2024-05-03T09:30:53Z,G3.AVEFAT.1-A6,
-NA,E5.BROHOR.2,NA,2024-05-03T12:20:59Z,E5.BROHOR.2,
-NA,J6.BROHOR.1,NA,2024-05-03T12:48:59Z,J6.BROHOR.1,
-NA,B4.GALPAR.2,NA,2024-05-05T11:03:49Z,B4.GALPAR.2,
-NA,B4.GALPAR.2,NA,2024-05-05T11:04:13Z,B4.GALPAR.2,
-NA,B4.GALPAR.2,NA,2024-05-05T11:05:11Z,B4.GALPAR.2,
-NA,H5.AVEBAR.2-E8,NA,2024-05-05T14:31:17Z,H5.AVEBAR.2-E8,
-NA,I5.AVEBAR.1-C8,NA,2024-05-04T11:55:20Z,I5.AVEBAR.1-C8,
-NA,H3.AVEBAR.1,NA,2024-05-04T12:32:43Z,H3.AVEBAR.1,
-NA,I4.AVEBAR.1-I1,NA,2024-05-04T13:14:41Z,I4.AVEBAR.1-I1,
-NA,J6.AVEBAR.1,NA,2024-05-04T14:30:02Z,J6.AVEBAR.1,
-NA,A4.BRODIA.2,NA,2024-05-06T10:12:14Z,A4.BRODIA.2,
-NA,A5.BRODIA.2,NA,2024-05-06T10:24:05Z,A5.BRODIA.2,
-NA,B7.BRODIA.2,NA,2024-05-06T11:47:17Z,B7.BRODIA.2,
-NA,I6.BRODIA.2-J2,NA,2024-05-06T14:22:46Z,I6.BRODIA.2-J2,
-NA,E1.BRODIA.2,NA,2024-05-06T14:30:46Z,E1.BRODIA.2,
-NA,C1.CLAPUR.2,NA,2024-05-07T11:26:46Z,C1.CLAPUR.2,
-NA,D8.CLAPUR.2,NA,2024-05-07T13:29:51Z,D8.CLAPUR.2,
-NA,A1.HYPGLA.2,NA,2024-05-09T11:56:16Z,A1.HYPGLA.2,
-NA,E8.MADGRA.2,NA,2024-05-10T10:32:52Z,E8.MADGRA.2,
-NA,23.G3.STIPUL.1,NA,2024-05-13T10:30:48Z,23.G3.STIPUL.1,
-NA,23.D7.STIPUL.1,NA,2024-05-13T11:16:30Z,23.D7.STIPUL.1,
-NA,23.E6.STIPUL.1,NA,2024-05-13T12:08:50Z,23.E6.STIPUL.1,
-NA,J6.HOLVIR.2,NA,2024-05-15T11:37:42Z,J6.HOLVIR.2,
-NA,C2.CORFIL.1-A7-CR,NA,2024-05-18T09:17:55Z,C2.CORFIL.1-A7-CR,
-NA,B6.CORFIL.1-A7,NA,2024-05-18T10:17:35Z,B6.CORFIL.1-A7,
-NA,23.E3.DANCAL.1,NA,2024-05-18T11:52:50Z,23.E3.DANCAL.1,
-NA,23.J2.DANCAL.1,NA,2024-05-18T11:58:09Z,23.J2.DANCAL.1,
-NA,23.E3.DANCAL.2,NA,2024-05-18T12:08:31Z,23.E3.DANCAL.2,
-NA,23.E3.DANCAL.3,NA,2024-05-18T12:13:38Z,23.E3.DANCAL.3,
-NA,23.E1.DANCAL.2,NA,2024-05-18T12:20:03Z,23.E1.DANCAL.2,
-NA,23.H6.DANCAL.1,NA,2024-05-18T12:31:20Z,23.H6.DANCAL.1,
-NA,23.G6.DANCAL.1,NA,2024-05-18T12:36:21Z,23.G6.DANCAL.1,
+NA,F5.MICCAL.2,NA,2024-04-28T14:32:36Z,F5.MICCAL.2,"no leaf, average other leaves of treatment and population"
+NA,F5.MICCAL.2,NA,2024-04-28T14:34:43Z,F5.MICCAL.2,"no leaf, average other leaves of treatment and population"
+NA,F5.MICCAL.2,NA,2024-04-28T14:35:40Z,F5.MICCAL.2,"no leaf, average other leaves of treatment and population"
+NA,B5.MICCAL.2,NA,2024-04-30T10:35:44Z,B5.MICCAL.2,"so small, never read. Changed code"
+NA,B3.MICCAL.2,NA,2024-04-30T10:40:15Z,B3.MICCAL.2,"were two b3 miccals, deleted one (copy). Also accidentally listed as no licor"
+NA,A8.MICCAL..2,NA,2024-04-30T12:46:26Z,A8.MICCAL..2,"extra period, removed in licor record"
+NA,D4.MICCAL.2,NA,2024-04-30T12:51:03Z,D4.MICCAL.2,"no leaf, average other leaves of treatment and population"
+NA,D4.MICCAL.2,NA,2024-04-30T12:51:55Z,D4.MICCAL.2,"no leaf, average other leaves of treatment and population"
+NA,E1.PLANOT.1,NA,2024-04-30T14:26:26Z,E1.PLANOT.1,changed licor record 0.2
+NA,3.VICSAT.2,NA,2024-05-01T09:43:26Z,3.VICSAT.2,"should be f3, fixed"
+NA,A1.HYPGLA.2,NA,2024-05-01T14:02:01Z,A1.HYPGLA.2,changed licor record to 0.1
+NA,A1.HYPGLA.2,NA,2024-05-01T14:02:37Z,A1.HYPGLA.2,changed licor record to 0.1
+NA,23.A7.ESCCAL.1,NA,2024-05-01T10:05:42Z,23.A7.ESCCAL.1,"no leaf, average other leaves of treatment and population"
+NA,23.G7.ESCCAL.2,NA,2024-05-01T10:32:46Z,23.G7.ESCCAL.2,changed licor record to 0.1
+NA,UNK.C2.ESCCAL.1,NA,2024-05-01T10:53:35Z,UNK.C2.ESCCAL.1,changed licor record to 23.
+NA,23.D7.ESCCAL.2,NA,2024-05-01T11:13:44Z,23.D7.ESCCAL.2,changed licor record to 0.1
+NA,23.I5.ESCCAL.2,NA,2024-05-01T11:20:57Z,23.I5.ESCCAL.2,changed licor record to 0.1
+NA,23.I8.ESCCAL.1,NA,2024-05-01T11:24:21Z,23.I8.ESCCAL.1,"no leaf, average other leaves of treatment and population"
+NA,UNK.E5.ESCCAL.1,NA,2024-05-01T11:40:18Z,UNK.E5.ESCCAL.1,changed licor record to 23.
+NA,G3.AVEFAT.1-A6,NA,2024-05-03T09:30:53Z,G3.AVEFAT.1-A6,"typo, should be e6"
+NA,E5.BROHOR.2,NA,2024-05-03T12:20:59Z,E5.BROHOR.2,changed licor record to 0.1
+NA,J6.BROHOR.1,NA,2024-05-03T12:48:59Z,J6.BROHOR.1,"no leaf, average other leaves of treatment and population"
+NA,B4.GALPAR.2,NA,2024-05-05T11:03:49Z,B4.GALPAR.2,"no leaf, average other leaves of treatment and population"
+NA,B4.GALPAR.2,NA,2024-05-05T11:04:13Z,B4.GALPAR.2,"no leaf, average other leaves of treatment and population"
+NA,B4.GALPAR.2,NA,2024-05-05T11:05:11Z,B4.GALPAR.2,"no leaf, average other leaves of treatment and population"
+NA,H5.AVEBAR.2-E8,NA,2024-05-05T14:31:17Z,H5.AVEBAR.2-E8,"changed licor record to 0.1, and capitalized e8 in leaf record"
+NA,I5.AVEBAR.1-C8,NA,2024-05-04T11:55:20Z,I5.AVEBAR.1-C8,"no leaf, average other leaves of treatment and population"
+NA,H3.AVEBAR.1,NA,2024-05-04T12:32:43Z,H3.AVEBAR.1,"no leaf, average other leaves of treatment and population"
+NA,I4.AVEBAR.1-I1,NA,2024-05-04T13:14:41Z,I4.AVEBAR.1-I1,capitalized I in leaf record
+NA,J6.AVEBAR.1,NA,2024-05-04T14:30:02Z,J6.AVEBAR.1,"no leaf, average other leaves of treatment and population"
+NA,A4.BRODIA.2,NA,2024-05-06T10:12:14Z,A4.BRODIA.2,"no leaf, average other leaves of treatment and population"
+NA,A5.BRODIA.2,NA,2024-05-06T10:24:05Z,A5.BRODIA.2,"leaf image edited incorrectly, fixed"
+NA,B7.BRODIA.2,NA,2024-05-06T11:47:17Z,B7.BRODIA.2,changed licor record to 0.1
+NA,I6.BRODIA.2-J2,NA,2024-05-06T14:22:46Z,I6.BRODIA.2-J2,changed licor record to 0.1
+NA,E1.BRODIA.2,NA,2024-05-06T14:30:46Z,E1.BRODIA.2,"no leaf, average other leaves of treatment and population"
+NA,C1.CLAPUR.2,NA,2024-05-07T11:26:46Z,C1.CLAPUR.2,"no leaf, average other leaves of treatment and population"
+NA,D8.CLAPUR.2,NA,2024-05-07T13:29:51Z,D8.CLAPUR.2,"no leaf, average other leaves of treatment and population"
+NA,A1.HYPGLA.2,NA,2024-05-09T11:56:16Z,A1.HYPGLA.2,changed licor record to 0.1
+NA,E8.MADGRA.2,NA,2024-05-10T10:32:52Z,E8.MADGRA.2,"no leaf, average other leaves of treatment and population"
+NA,23.G3.STIPUL.1,NA,2024-05-13T10:30:48Z,23.G3.STIPUL.1,"no leaf, average other leaves of treatment and population"
+NA,23.D7.STIPUL.1,NA,2024-05-13T11:16:30Z,23.D7.STIPUL.1,"leaf name missing ""1"""
+NA,23.E6.STIPUL.1,NA,2024-05-13T12:08:50Z,23.E6.STIPUL.1,"no leaf, average other leaves of treatment and population"
+NA,J6.HOLVIR.2,NA,2024-05-15T11:37:42Z,J6.HOLVIR.2,changed licor record to 0.1
+NA,C2.CORFIL.1-A7-CR,NA,2024-05-18T09:17:55Z,C2.CORFIL.1-A7-CR,Removed CR
+NA,B6.CORFIL.1-A7,NA,2024-05-18T10:17:35Z,B6.CORFIL.1-A7,changed licor record 0.2
+NA,23.E3.DANCAL.1,NA,2024-05-18T11:52:50Z,23.E3.DANCAL.1,"no leaf, average other leaves of treatment and population"
+NA,23.J2.DANCAL.1,NA,2024-05-18T11:58:09Z,23.J2.DANCAL.1,"no leaf, average other leaves of treatment and population"
+NA,23.E3.DANCAL.2,NA,2024-05-18T12:08:31Z,23.E3.DANCAL.2,"no leaf, average other leaves of treatment and population"
+NA,23.E3.DANCAL.3,NA,2024-05-18T12:13:38Z,23.E3.DANCAL.3,"no leaf, average other leaves of treatment and population"
+NA,23.E1.DANCAL.2,NA,2024-05-18T12:20:03Z,23.E1.DANCAL.2,"no leaf, average other leaves of treatment and population"
+NA,23.H6.DANCAL.1,NA,2024-05-18T12:31:20Z,23.H6.DANCAL.1,"no leaf, average other leaves of treatment and population"
+NA,23.G6.DANCAL.1,NA,2024-05-18T12:36:21Z,23.G6.DANCAL.1,"no leaf, average other leaves of treatment and population"

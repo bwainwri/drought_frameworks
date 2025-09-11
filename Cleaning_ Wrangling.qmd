@@ -412,7 +412,9 @@ Now I need to bring in Licor leaf area csv and join. Also need to double check n
 GALPAR, Holvir, miccal not working -- fixed, just needed to adjust minimum size.
 
 ```{r}
-#| eval: false
+#| echo: false
+#| warning: false
+
 aircar = run.ij(set.directory = "/Users/brookewainwright/Documents/GitHub_Projects/drought_frameworks/Licor Leaf Area copy/AIRCAR",
               distance.pixel = 355,
               known.distance = 3,
@@ -594,9 +596,9 @@ madgra<-madgra$summary
 miccal = run.ij(set.directory = "/Users/brookewainwright/Documents/GitHub_Projects/drought_frameworks/Licor Leaf Area copy/MICCAL", 
                 distance.pixel = 355, 
                 known.distance = 3, 
-                low.size = 0.005,
+                low.size = 0.0005,
                 log = TRUE)
-             #   save.image = TRUE)
+                # save.image = TRUE)
 miccal<-miccal$summary
 
 mirmul = run.ij(set.directory = "/Users/brookewainwright/Documents/GitHub_Projects/drought_frameworks/Licor Leaf Area copy/MIRMUL", 
@@ -711,6 +713,71 @@ leaf_licor_area <- rbind(aircar,
 leaf_licor_area$sample <- as.character(leaf_licor_area$sample)
 leaf_licor_area$sample[which(nchar(leaf_licor_area$sample) < 18)]
 
+# order samples by nchar
+# make a sample short column that removes 23 and replacement plots and makes their own column
+# and a no licor column
+
+leaf_licor_area$nchar <- nchar(leaf_licor_area$sample)
+
+leaf_licor_area <- leaf_licor_area %>% 
+  arrange(nchar)
+unique(leaf_licor_area$nchar)
+
+# break up dataset into sample name types and create new columns: sample short, perennial
+
+# then merge with a no licor list 
+leaf_18 <- leaf_licor_area %>% 
+  filter(nchar == 18)
+leaf_18$sample_short <- leaf_18$sample
+leaf_18$perennial <- 0
+leaf_18$plot_replace <- NA
+
+# these are samples from 2023
+leaf_20 <- leaf_licor_area %>% 
+  filter(nchar == 20)
+leaf_20$sample_short <- substr(leaf_20$sample,3,20)
+leaf_20$perennial <- 1
+leaf_20$plot_replace <- NA
+
+# these are non-2023 samples with replacement plots
+leaf_21 <- leaf_licor_area %>% 
+  filter(nchar == 21)
+leaf_21$sample_short <- paste0(
+  substr(leaf_21$sample, 1, 9),
+  "_",
+  substr(leaf_21$sample, 14,21)
+)
+leaf_21$perennial <- 0
+leaf_21$plot_replace <- substr(leaf_21$sample, 11,12)
+
+# 2023 samples with a replacement plot
+leaf_23 <- leaf_licor_area %>% 
+  filter(nchar == 23)
+leaf_23$sample_short <- paste0(
+  substr(leaf_23$sample, 3, 11),
+  "_",
+  substr(leaf_23$sample, 16,23)
+)
+leaf_23$perennial <- 1
+leaf_23$plot_replace <- substr(leaf_23$sample, 13,14)
+
+leaf_licor <- rbind(leaf_18,
+                         leaf_20,
+                         leaf_21,
+                         leaf_23)
+str(leaf_licor)
+
+# merge with dataset of plant ids with no licor
+nolicors <- read_csv("leaf_are_no_licor.csv")
+
+leaf_licor_area <- left_join(leaf_licor, nolicors, by=join_by(sample, sample_short, plot_replace))
+length(unique(leaf_licor_area$sample))
+
+# check for duplicates
+leaf_licor$sample[which(duplicated(leaf_licor$sample))]
+
+leaf_licor_area$sample[which(duplicated(leaf_licor_area$sample))]
+
 write_csv(leaf_licor_area, "leaf_licor_area.csv")
 ```
 
@@ -720,36 +787,38 @@ Double check that the numbers of values per species aligns with number of images
 
 Then merge with Licor dataset by plant ID.
 
-LEFT OFF HERE
-
 Started cleaning up files for merging, resolving errors, etc. Four dates of licor dataframe have all NAs for plant id and WUE, these came from the daisy licor -- plant id is in the original file but didn't carry over either in csv step or binding step. 
 
-Plant id can be found in other "plant_id" column, not "plant id". But doesn't explain missing WUE.
+- Plant id can be found in other "plant_id" column, not "plant id". But doesn't explain missing WUE.
 
 WUE is a user defined variable that we didn't put in Daisy, so I'll need to calculate it manually.
+
+Below chunk creates an error list. Rand throught it once (error list 1) and fixed errors in licor.csv and licor leaf area. csv, but not originals.
 
 Return here for further cleaning and prepping.
 
 ```{r}
-# Separate date from plant ID, make in date format
-
+# Read in combined data from above
 leaf_licor_area <- read_csv("leaf_licor_area.csv")
 head(leaf_licor_area)
 licor <- read_csv("licor.csv")
 head(licor)
+
+# check to see if any samples are too short or accidentally contain periods
 leaf_licor_area$sample[which(nchar(leaf_licor_area$sample) < 18)]
 
+# Make date column for licor data
 licor$Date <- as.Date(substr(licor$date, start=1, stop=10))
 str(licor$Date)
 
-# make a function such that if the string is 20 characters long, it' starts at 13 and ends at 20, and if the string is 18 characters long, it starts at 11 and ends at 18
-
+# Make date column for licor leaf area
 leaf_licor_area$Date <- as.Date(substr(leaf_licor_area$sample_short, start=11, stop=18), "%Y%m%d")
-str(licor$Date)
+str(leaf_licor_area$Date)
 
+# make perennial column chracter
 leaf_licor_area$perennial <- as.character(leaf_licor_area$perennial)
 
-# separate plant ID from same and add periods to plant id
+# separate plant ID from date and add periods to plant id
 leaf_licor_area$Plant_ID <- substr(leaf_licor_area$sample_short, start=1,stop=9)
 leaf_licor_area$Plant_ID <- paste0(
   substr(leaf_licor_area$Plant_ID, 1, 2),
@@ -768,17 +837,17 @@ leaf_licor_area$Plant_ID
 # I think I need to split the 23s and replacements and then r-bind
 # Add 23 to the front of two year old perennials
 lf_lic_area_23 <- leaf_licor_area %>% 
-  filter(perennial == "23")
+  filter(perennial == "1")
 
 lf_lic_area_23$Plant_ID <- paste0(
-  substr(lf_lic_area_23$perennial, 1, 2),
+  "23",
   ".",
   substr(lf_lic_area_23$Plant_ID, 1, nchar(lf_lic_area_23$Plant_ID))
 )
 lf_lic_area_23$Plant_ID
 
 lf_lic_area_na <- leaf_licor_area %>% 
-  filter(is.na(perennial))
+  filter(perennial == 0)
 
 leaf_licor_area <- rbind(lf_lic_area_23, lf_lic_area_na)
 
@@ -787,77 +856,3 @@ lf_lic_area_rep <- leaf_licor_area %>%
   filter(!is.na(plot_replace))
 
 lf_lic_area_rep$Plant_ID <- paste0(
-  substr(lf_lic_area_rep$Plant_ID, 1, nchar(lf_lic_area_rep$Plant_ID)),
-  "-",
-  substr(lf_lic_area_rep$plot_replace, 1, 2)
-)
-lf_lic_area_rep$Plant_ID
-
-lf_lic_area_na <- leaf_licor_area %>% 
-  filter(is.na(plot_replace))
-
-leaf_licor_area <- rbind(lf_lic_area_rep, lf_lic_area_na)
-
-# align plant_ids and check for errors
-leaf_licor_ids <- leaf_licor_area %>% 
-  mutate(Plant_ID_lf = Plant_ID) %>% 
-  select(Date,
-         Plant_ID,
-         Plant_ID_lf)
-
-licor$Plant_ID <- toupper(licor$`plant id`)
-
-licor_ids <- licor %>% 
-  mutate(Plant_ID_lic = Plant_ID) %>% 
-  select(date,
-         Plant_ID,
-         Plant_ID_lic)
-
-error_check <- full_join(leaf_licor_ids,licor_ids, by= join_by(Plant_ID))
-list <- error_check[which(!complete.cases(error_check)),]
-write_csv(list, "error_list.csv")
-
-## LEFT OFF HERE ##
-
-# capitalize Licor plant id
-licor$Plant_ID <- toupper(licor$`plant id`)
-
-
-# merge with licor leaf area
-licor2 <- full_join(licor,leaf_licor_area,by=c("Plant_ID" = "Plant_ID"))
-
-
-# Come back and investigate NAs for licor2 -- why are some leaf areas missing
-licor_incomplete <- licor2[!complete.cases(licor2[ , c('plant id', 'Plant_ID')]), ]
-
-
-# multiply focal data by leaf area fraction
-licor2$leaf_ratio <- 6/licor2$total.leaf.area
-licor2 <- licor2 %>% 
-  filter(!is.na(total.leaf.area)) %>% # filter NAs for now
-  mutate(WUE_adj = leaf_ratio*WUE,
-         E_adj = leaf_ratio*as.numeric(E),
-         A_adj = leaf_ratio*as.numeric(A),
-         Ci_adj = leaf_ratio*as.numeric(Ci),
-         gsw_adj = leaf_ratio*as.numeric(gsw))
-str(licor2)
-
-# remove licor data with gsw below threshold
-licor2[which(licor2$gsw_adj < 0.03),]
-
-# There are values from September 2020???? investigate
-# Weirdly this file 2023-04-30-0922_BRODIA_39.csv has the date at Sep 2020, some glitch. will need to fix
-# September 23, 2020
-
-# test for licor outliers by species, population, and treatment
-
-
-
-# average licor data by plant_id
-
-
-
-# extract species and plot from plant id
-
-```
-
